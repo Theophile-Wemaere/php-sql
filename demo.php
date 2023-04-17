@@ -55,69 +55,67 @@
 		<input type="submit" value="Execute" class="login-button">
 	</form>
 
-	<?php
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		// Connect to MySQL database
-		$servername = "localhost";
+	<?php if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   // Connect to MySQL database
+   $servername = "localhost";
 
-    $creds = file(".creds");
-    $creds_line = $creds[0];
-    $creds_parts = explode(':', $creds_line);
-    $username = $creds_parts[0];
-    $password = $creds_parts[1];
+   $creds = file(".creds");
+   $creds_line = $creds[0];
+   $creds_parts = explode(":", $creds_line);
+   $username = $creds_parts[0];
+   $password = $creds_parts[1];
 
-		$dbname = "employees";
+   $dbname = "employees";
 
-		$conn = mysqli_connect($servername, $username, $password, $dbname);
-		if (!$conn) {
-			die("Connection failed: " . mysqli_connect_error());
-		}
+   $conn = mysqli_connect($servername, $username, $password, $dbname);
+   if (!$conn) {
+     die("Connection failed: " . mysqli_connect_error());
+   }
 
-    // Execute SQL query
-    $sql = $_POST["query"];
-    $sql = str_replace(';', '', $sql);
+   // Execute SQL query
+   $sql = $_POST["query"];
+   $sql = str_replace(";", "", $sql);
 
-    // Check if query is a SELECT statement
-    if (preg_match('/^\s*SELECT/i', $sql)) {
-      $num_results = $_POST["num_results"];
-      $sql .= " LIMIT " . $num_results;
-    }
+   // Check if query is a SELECT statement
+   if (preg_match("/^\s*SELECT/i", $sql)) {
+     $num_results = $_POST["num_results"];
+     $sql .= " LIMIT " . $num_results;
+   }
 
-    $result = mysqli_query($conn, $sql);
-		// Display results on HTML page
-		if ($result) {
-			if (mysqli_num_rows($result) > 0) {
-				echo "<table>";
-				echo "<tr>";
-				foreach (mysqli_fetch_fields($result) as $field) {
-					echo "<th>" . $field->name . "</th>";
-				}
-				echo "</tr>";
-				while ($row = mysqli_fetch_assoc($result)) {
-					echo "<tr>";
-					foreach ($row as $cell) {
-						echo "<td>" . $cell . "</td>";
-					}
-					echo "</tr>";
-				}
-				echo "</table>";
-			} else {
-				echo "No results found.";
-			}
-		} else {
-			echo "Error executing query: " . mysqli_error($conn);
-      echo $sql;
-		}
+   $result = mysqli_query($conn, $sql);
+   // Display results on HTML page
+   if ($result) {
+     if (mysqli_num_rows($result) > 0) {
+       echo "<table>";
+       echo "<tr>";
+       foreach (mysqli_fetch_fields($result) as $field) {
+         echo "<th>" . $field->name . "</th>";
+       }
+       echo "</tr>";
+       while ($row = mysqli_fetch_assoc($result)) {
+         echo "<tr>";
+         foreach ($row as $cell) {
+           echo "<td>" . $cell . "</td>";
+         }
+         echo "</tr>";
+       }
+       echo "</table>";
+     } else {
+       echo "No results found.";
+     }
+   } else {
+     echo "Error executing query: " . mysqli_error($conn);
+     echo $sql;
+   }
 
-		// Close MySQL connection
-		mysqli_close($conn);
-	}
-	?>
+   // Close MySQL connection
+   mysqli_close($conn);
+ } ?>
 
         <div class="switcher">
-          <a><button class="page-button">&lt;</button></a>
-          <a> 1/6 </a>
-          <a href="button_2.html"><button class="page-button">&gt;</button></a>
+          <a href="code.php" ><button class="page-button">&lt;</button></a>
+          <a> 3/5 </a>
+          <a href="login.php"><button class="page-button">&gt;</button></a>
         </div>
       </div>
     </div>

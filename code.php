@@ -41,11 +41,40 @@
         <a>Utiliser une base de donnée MySQL avec PHP</a>
       </div>
       <div class="main-box">
-        <img src="https://live.staticflickr.com/8320/8008190808_eb052f2203.jpg">
+      <?php
+      $phpCode = '<?php
+// Database connection settings
+$servername = "localhost";
+$username = "username";
+$password = "password";
+$dbname = "databasename";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// execute query
+$sql = "SELECT * FROM employees LIMIT 10";
+$result = $conn->query($sql);
+
+// display result
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) 
+    {
+        echo "<pre>" . print_r($row, true) . "</pre>";
+    }
+} else {
+    echo "0 results";
+}
+
+// Close database connection
+$conn->close();
+?>';
+        echo '<pre><code class="language-php">' . htmlspecialchars($phpCode) . '</code></pre>';
+        ?>
         <div class="switcher">
-          <a><button class="page-button">&lt;</button></a>
-          <a> 1/5 </a>
-          <a href="code.php"><button class="page-button">&gt;</button></a>
+          <a href="index.php"><button class="page-button">&lt;</button></a>
+          <a> 2/5 </a>
+          <a href="demo.php"><button class="page-button">&gt;</button></a>
         </div>
       </div>
     </div>
