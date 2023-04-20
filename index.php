@@ -38,7 +38,7 @@
         <div class="top-bar-img">
           <a href="/"><img src="/images/logo-notext.png" /></a>
         </div>
-        <a>Utiliser une base de donnée MySQL avec PHP</a>
+        <a>Utiliser une base de données MySQL avec PHP</a>
       </div>
       <div class="main-box">
         <img src="https://live.staticflickr.com/8320/8008190808_eb052f2203.jpg">

@@ -38,13 +38,48 @@
         <div class="top-bar-img">
           <a href="/"><img src="/images/logo-notext.png" /></a>
         </div>
-        <a>Utiliser une base de donnée MySQL avec PHP</a>
+        <a>Utiliser une base de données MySQL avec PHP</a>
       </div>
       <div class="main-box">
 
+      <?php
+      $phpCode = '$sql = $_POST["query"];
+$sql = str_replace(";", "", $sql);
+
+// Check if query is a SELECT statement
+if (preg_match("/^\s*SELECT/i", $sql)) {
+    $num_results = $_POST["num_results"];
+    $sql .= " LIMIT " . $num_results;
+}
+
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+// Display results on HTML page
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if (count($result) > 0) {
+    echo "<table>";
+    echo "<tr>";
+    foreach (array_keys($result[0]) as $field) {
+        echo "<th>" . $field . "</th>";
+    }
+    echo "</tr>";
+    foreach ($result as $row) {
+        echo "<tr>";
+        foreach ($row as $cell) {
+            echo "<td>" . $cell . "</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";
+}
+';
+        echo '<pre><code class="language-php">' . htmlspecialchars($phpCode) . '</code></pre>';
+        ?>
+
+
 	<form method="POST">
 		<label for="query">Enter SQL query:</label><br>
-		<textarea id="query" name="query" rows="5" cols="30"><?php if(isset($_POST['query'])) { echo htmlspecialchars($_POST['query']); } ?></textarea><br>
+		<textarea id="query" name="query" rows="1" cols="30"><?php if(isset($_POST['query'])) { echo htmlspecialchars($_POST['query']); } ?></textarea><br>
     <label for="num_results">Number of results per page:</label>
 		<select id="num_results" name="num_results">
 			<option value="10">10</option>

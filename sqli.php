@@ -43,7 +43,7 @@
         <div class="top-bar-img">
           <a href="/"><img src="/images/logo-notext.png" /></a>
         </div>
-        <a>Utiliser une base de donnée MySQL avec PHP</a>
+        <a>Utiliser une base de données MySQL avec PHP</a>
       </div>
       <div class="main-box">
       <?php
