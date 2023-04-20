@@ -18,6 +18,14 @@
       href="https://fonts.googleapis.com/css?family=Reem+Kufi"
       rel="stylesheet"
     />
+    <link
+    rel="stylesheet"
+    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"
+  />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>
+    hljs.highlightAll();
+  </script>
   </head>
   <body>
     <div class="wrapper">
@@ -27,52 +35,92 @@
         </div>
         <a>Utiliser une base de donnée MySQL avec PHP</a>
       </div>
-   	  <div class="login">
-        <h1 class="title_connexion">CONNEXION</h1>
-        <form action="login.php" method="post" class="form_log">
-            <input class="email" type="email" name="email" placeholder="Email:" required>
-            <input class="mdp" type="password" name="password" placeholder="Mot de passe:" required>
-            <a href="">Mot de passe oublié ?</a>
-            <div class="remember">
-                <input type="checkbox" id="check" name="remember">
-                <label for="check">Se souvenir de moi</label>
-            </div>
-            <button id="btn" class="connect_button" type="submit">Se connecter</button>
-            <?php
-            // Replace with your own database credentials
-            $host = "localhost";
-            $creds = file(".creds");
-            $creds_line = $creds[0];
-            $creds_parts = explode(":", $creds_line);
-            $username = $creds_parts[0];
-            $password = $creds_parts[1];
-            $dbname = "employees";
+      <div class="main-box">
+        <div class="login">
+        <?php
+        $phpCode = '//Get the email and password from the form
+$email = $_POST["email"];
+$password = md5($_POST["password"]);
 
-            // Connect to the database
-            $conn = mysqli_connect($servername, $username, $password, $dbname);
+// Prepare and execute the query to check if the user exists
+$sql = "SELECT password FROM creds WHERE email = :email";
+$stmt = $pdo->prepare($sql);
+$stmt->execute(["email" => $email]);
+$result = $stmt->fetchColumn();
 
-            // Get the email and password from the form
-            $email = $_POST["email"];
-            $password = md5($_POST["password"]);
-            
-            // Prepare and execute the query to check if the user exists
-            $sql = "SELECT password FROM creds WHERE email = " .  $email
-            $result = mysqli_query($conn, $sql);
-            if ($result) {
-              $row = mysqli_fetch_assoc($result);
-              $hashed_password = $row['password'];
-              echo '$password \n $hashed_password'
-              if (password_verify($password, $hashed_password)) {
-                  echo "Credentials are goods"
-              } else {
-                  echo "Error, bad email or password"
+if ($stmt->rowCount() > 0) {
+  $row = $stmt->fetch();
+  $password_hash = $row[\'password\'];
+  if (password_verify($password, $password_hash)) {
+    echo "Password is valid";
+  } else {
+      echo "Invalid password";
+  }
+} else {
+  echo "Error, bad credentials";
+};';
+        echo '<pre><code class="language-php">' .
+          htmlspecialchars($phpCode) .
+          "</code></pre>";
+        ?>
+        
+          <h1 class="title_connexion">CONNEXION</h1>
+          <form action="login.php" method="post" class="form_log">
+              <input class="email" type="email" name="email" placeholder="Email:" required>
+              <input class="mdp" type="password" name="password" placeholder="Mot de passe:" required>
+              <button id="btn" class="connect_button" type="submit">Se connecter</button>
+              <?php
+              // Replace with your own database credentials
+              $host = "localhost";
+              $creds = file(".creds");
+              $creds_line = $creds[0];
+              $creds_parts = explode(":", $creds_line);
+              $username = $creds_parts[0];
+              $password = $creds_parts[1];
+              $dbname = "employees";
+
+              // Connect to the database using PDO
+              $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+              $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+              ];
+              try {
+                $pdo = new PDO($dsn, $username, $password, $options);
+              } catch (PDOException $e) {
+                echo "error connecting";
+                throw new PDOException($e->getMessage(), (int) $e->getCode());
               }
-            } 
-                echo "Error, bad email or password"
-            }
-            ?>  
-        </form>
-        <a class="link_compt_crea" href="">Vous n'avez pas de compte ? Créez le</a>
+
+              // Get the email and password from the form
+              $email = $_POST["email"];
+              $password = $_POST["password"];
+
+              // Prepare and execute the query to check if the user exists
+              $sql = "SELECT password FROM creds WHERE email = :email";
+              $stmt = $pdo->prepare($sql);
+              $stmt->execute(["email" => $email]);
+              if ($stmt->rowCount() > 0) {
+                $row = $stmt->fetch();
+                $password_hash = $row["password"];
+                if (password_verify($password, $password_hash)) {
+                  echo "Password is valid!";
+                  echo '<script>alert("Your password is valid ! Congratulation")</script>';
+                } else {
+                  echo "Invalid password.";
+                }
+              } else {
+                echo "Error, bad credentials";
+              }
+              ?>
+          </form>
+        </div>
+        <div class="switcher">
+            <a href="demo.php" ><button class="page-button">&lt;</button></a>
+            <a> 4/5 </a>
+            <a href="sqli.php"><button class="page-button">&gt;</button></a>
+        </div>
       </div>
     </div>
   </body>
