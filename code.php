@@ -50,25 +50,35 @@ $password = "password";
 $dbname = "databasename";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // Set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// execute query
-$sql = "SELECT * FROM employees LIMIT 10";
-$result = $conn->query($sql);
+    // execute query
+    $sql = "SELECT * FROM employees LIMIT 10";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
 
-// display result
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) 
-    {
-        echo "<pre>" . print_r($row, true) . "</pre>";
+    // display result
+    if ($stmt->rowCount() > 0) {
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) 
+        {
+            echo "<pre>" . print_r($row, true) . "</pre>";
+        }
+    } else {
+        echo "0 results";
     }
-} else {
-    echo "0 results";
+}
+catch(PDOException $e)
+{
+    echo "Connection failed: " . $e->getMessage();
 }
 
 // Close database connection
-$conn->close();
-?>';
+$conn = null;
+?>
+';
         echo '<pre><code class="language-php">' . htmlspecialchars($phpCode) . '</code></pre>';
         ?>
         <div class="switcher">
@@ -84,7 +94,7 @@ $conn->close();
     <a href="/contact.html">Nous contacter</a>
     <div class="medias">
       <!-- https://icons8.com/icons/set/social-media -->
-      <a href="https://github.com/Theophile_Wemaere/cool_buttons">
+      <a href="https://github.com/Theophile-Wemaere/php-sql">
         <img src="images/icons8-github-24.png" />
       </a>
       <a href="https://linkedin.com/"

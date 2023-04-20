@@ -55,7 +55,7 @@
     <a href="/contact.html">Nous contacter</a>
     <div class="medias">
       <!-- https://icons8.com/icons/set/social-media -->
-      <a href="https://github.com/Theophile_Wemaere/cool_buttons">
+      <a href="https://github.com/Theophile-Wemaere/php-sql">
         <img src="images/icons8-github-24.png" />
       </a>
       <a href="https://linkedin.com/"

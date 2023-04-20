@@ -44,7 +44,7 @@
 
 	<form method="POST">
 		<label for="query">Enter SQL query:</label><br>
-		<textarea id="query" name="query" rows="5" cols="30"></textarea><br>
+		<textarea id="query" name="query" rows="5" cols="30"><?php if(isset($_POST['query'])) { echo htmlspecialchars($_POST['query']); } ?></textarea><br>
     <label for="num_results">Number of results per page:</label>
 		<select id="num_results" name="num_results">
 			<option value="10">10</option>

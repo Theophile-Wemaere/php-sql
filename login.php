@@ -62,6 +62,7 @@ if ($stmt->rowCount() > 0) {
         echo '<pre><code class="language-php">' .
           htmlspecialchars($phpCode) .
           "</code></pre>";
+        echo '<a href="https://www.php.net/manual/en/function.password-verify.php">password_verify documentation page</a>';
         ?>
         
           <h1 class="title_connexion">CONNEXION</h1>
@@ -70,48 +71,58 @@ if ($stmt->rowCount() > 0) {
               <input class="mdp" type="password" name="password" placeholder="Mot de passe:" required>
               <button id="btn" class="connect_button" type="submit">Se connecter</button>
               <?php
-              // Replace with your own database credentials
-              $host = "localhost";
-              $creds = file(".creds");
-              $creds_line = $creds[0];
-              $creds_parts = explode(":", $creds_line);
-              $username = $creds_parts[0];
-              $password = $creds_parts[1];
-              $dbname = "employees";
+              if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                // Connect to MySQL database
+                $creds = file(".creds");
+                $creds_line = $creds[0];
+                $creds_parts = explode(":", $creds_line);
+                $username = $creds_parts[0];
+                $password = $creds_parts[1];
+                $dbname = "employees";
 
-              // Connect to the database using PDO
-              $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
-              $options = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-              ];
-              try {
-                $pdo = new PDO($dsn, $username, $password, $options);
-              } catch (PDOException $e) {
-                echo "error connecting";
-                throw new PDOException($e->getMessage(), (int) $e->getCode());
-              }
+                try {
+                    $conn = new PDO("mysql:host=localhost;dbname=$dbname", $username, $password);
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-              // Get the email and password from the form
-              $email = $_POST["email"];
-              $password = $_POST["password"];
+                    // Execute SQL query
+                    $sql = $_POST["query"];
+                    $sql = str_replace(";", "", $sql);
 
-              // Prepare and execute the query to check if the user exists
-              $sql = "SELECT password FROM creds WHERE email = :email";
-              $stmt = $pdo->prepare($sql);
-              $stmt->execute(["email" => $email]);
-              if ($stmt->rowCount() > 0) {
-                $row = $stmt->fetch();
-                $password_hash = $row["password"];
-                if (password_verify($password, $password_hash)) {
-                  echo "Password is valid!";
-                  echo '<script>alert("Your password is valid ! Congratulation")</script>';
-                } else {
-                  echo "Invalid password.";
+                    // Check if query is a SELECT statement
+                    if (preg_match("/^\s*SELECT/i", $sql)) {
+                        $num_results = $_POST["num_results"];
+                        $sql .= " LIMIT " . $num_results;
+                    }
+
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+
+                    // Display results on HTML page
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if (count($result) > 0) {
+                        echo "<table>";
+                        echo "<tr>";
+                        foreach (array_keys($result[0]) as $field) {
+                            echo "<th>" . $field . "</th>";
+                        }
+                        echo "</tr>";
+                        foreach ($result as $row) {
+                            echo "<tr>";
+                            foreach ($row as $cell) {
+                                echo "<td>" . $cell . "</td>";
+                            }
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    } else {
+                        echo "No results found.";
+                    }
+
+                    // Close MySQL connection
+                    $conn = null;
+                } catch(PDOException $e) {
+                    echo "Error executing query: " . $e->getMessage();
                 }
-              } else {
-                echo "Error, bad credentials";
               }
               ?>
           </form>
@@ -128,6 +139,9 @@ if ($stmt->rowCount() > 0) {
     <a>© take-eir</a>
     <a href="/contact.html">Nous contacter</a>
     <div class="medias">
+      <a href="https://github.com/Theophile-Wemaere/cool_buttons">
+        <img src="images/icons8-github-24.png" />
+      </a>
       <!-- https://icons8.com/icons/set/social-media -->
       <a href="https://linkedin.com/"
         ><img src="/images/icons8-linkedin-24.png" />
