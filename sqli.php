@@ -51,17 +51,21 @@
 $password = $_POST["password"];
 $query = \'SELECT * FROM users WHERE username = $username AND password = $password\';  
 ';
-        echo '<pre><code class="language-php">' . htmlspecialchars($phpCode) . '</code></pre>';
-        ?>
+      echo '<pre><code class="language-php">' .
+        htmlspecialchars($phpCode) .
+        "</code></pre>";
+      ?>
         <img src="https://academy.hackthebox.com/storage/modules/33/notadmin_diagram_1.png" width=50% height=auto>
         <?php
-      $phpCode = '$email = $_POST["username"];
+        $phpCode = '$email = $_POST["username"];
 $password = $_POST["password"];
 $sql = "SELECT password FROM creds WHERE email = :email";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(["email" => $email]);
 ';
-        echo '<pre><code class="language-php">' . htmlspecialchars($phpCode) . '</code></pre>';
+        echo '<pre><code class="language-php">' .
+          htmlspecialchars($phpCode) .
+          "</code></pre>";
         ?>
         <div class="switcher">
           <a href="login.php" ><button class="page-button">&lt;</button></a>

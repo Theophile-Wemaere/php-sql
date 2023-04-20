@@ -79,8 +79,10 @@ catch(PDOException $e)
 $conn = null;
 ?>
 ';
-        echo '<pre><code class="language-php">' . htmlspecialchars($phpCode) . '</code></pre>';
-        ?>
+      echo '<pre><code class="language-php">' .
+        htmlspecialchars($phpCode) .
+        "</code></pre>";
+      ?>
         <div class="switcher">
           <a href="index.php"><button class="page-button">&lt;</button></a>
           <a> 2/5 </a>

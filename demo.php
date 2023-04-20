@@ -73,13 +73,19 @@ if (count($result) > 0) {
     echo "</table>";
 }
 ';
-        echo '<pre><code class="language-php">' . htmlspecialchars($phpCode) . '</code></pre>';
-        ?>
+      echo '<pre><code class="language-php">' .
+        htmlspecialchars($phpCode) .
+        "</code></pre>";
+      ?>
 
 
 	<form method="POST">
 		<label for="query">Enter SQL query:</label><br>
-		<textarea id="query" name="query" rows="1" cols="30"><?php if(isset($_POST['query'])) { echo htmlspecialchars($_POST['query']); } ?></textarea><br>
+		<textarea id="query" name="query" rows="1" cols="30"><?php if (
+    isset($_POST["query"])
+  ) {
+    echo htmlspecialchars($_POST["query"]);
+  } ?></textarea><br>
     <label for="num_results">Number of results per page:</label>
 		<select id="num_results" name="num_results">
 			<option value="10">10</option>
@@ -90,61 +96,63 @@ if (count($result) > 0) {
 		<input type="submit" value="Execute" class="login-button">
 	</form>
 
-	<?php 
-  if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Connect to MySQL database
-    $creds = file(".creds");
-    $creds_line = $creds[0];
-    $creds_parts = explode(":", $creds_line);
-    $username = $creds_parts[0];
-    $password = $creds_parts[1];
-    $dbname = "employees";
+	<?php if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   // Connect to MySQL database
+   $creds = file(".creds");
+   $creds_line = $creds[0];
+   $creds_parts = explode(":", $creds_line);
+   $username = $creds_parts[0];
+   $password = $creds_parts[1];
+   $dbname = "employees";
 
-    try {
-        $conn = new PDO("mysql:host=localhost;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   try {
+     $conn = new PDO(
+       "mysql:host=localhost;dbname=$dbname",
+       $username,
+       $password
+     );
+     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Execute SQL query
-        $sql = $_POST["query"];
-        $sql = str_replace(";", "", $sql);
+     // Execute SQL query
+     $sql = $_POST["query"];
+     $sql = str_replace(";", "", $sql);
 
-        // Check if query is a SELECT statement
-        if (preg_match("/^\s*SELECT/i", $sql)) {
-            $num_results = $_POST["num_results"];
-            $sql .= " LIMIT " . $num_results;
-        }
+     // Check if query is a SELECT statement
+     if (preg_match("/^\s*SELECT/i", $sql)) {
+       $num_results = $_POST["num_results"];
+       $sql .= " LIMIT " . $num_results;
+     }
 
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+     $stmt = $conn->prepare($sql);
+     $stmt->execute();
 
-        // Display results on HTML page
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if (count($result) > 0) {
-            echo "<table>";
-            echo "<tr>";
-            foreach (array_keys($result[0]) as $field) {
-                echo "<th>" . $field . "</th>";
-            }
-            echo "</tr>";
-            foreach ($result as $row) {
-                echo "<tr>";
-                foreach ($row as $cell) {
-                    echo "<td>" . $cell . "</td>";
-                }
-                echo "</tr>";
-            }
-            echo "</table>";
-        } else {
-            echo "No results found.";
-        }
+     // Display results on HTML page
+     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+     if (count($result) > 0) {
+       echo "<table>";
+       echo "<tr>";
+       foreach (array_keys($result[0]) as $field) {
+         echo "<th>" . $field . "</th>";
+       }
+       echo "</tr>";
+       foreach ($result as $row) {
+         echo "<tr>";
+         foreach ($row as $cell) {
+           echo "<td>" . $cell . "</td>";
+         }
+         echo "</tr>";
+       }
+       echo "</table>";
+     } else {
+       echo "No results found.";
+     }
 
-        // Close MySQL connection
-        $conn = null;
-    } catch(PDOException $e) {
-        echo "Error executing query: " . $e->getMessage();
-    }
-  }
-?>
+     // Close MySQL connection
+     $conn = null;
+   } catch (PDOException $e) {
+     echo "Error executing query: " . $e->getMessage();
+   }
+ } ?>
 
         <div class="switcher">
           <a href="code.php" ><button class="page-button">&lt;</button></a>
