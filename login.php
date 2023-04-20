@@ -71,58 +71,48 @@ if ($stmt->rowCount() > 0) {
               <input class="mdp" type="password" name="password" placeholder="Mot de passe:" required>
               <button id="btn" class="connect_button" type="submit">Se connecter</button>
               <?php
-              if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                // Connect to MySQL database
-                $creds = file(".creds");
-                $creds_line = $creds[0];
-                $creds_parts = explode(":", $creds_line);
-                $username = $creds_parts[0];
-                $password = $creds_parts[1];
-                $dbname = "employees";
+              // Replace with your own database credentials
+              $host = "localhost";
+              $creds = file(".creds");
+              $creds_line = $creds[0];
+              $creds_parts = explode(":", $creds_line);
+              $username = $creds_parts[0];
+              $password = $creds_parts[1];
+              $dbname = "employees";
 
-                try {
-                    $conn = new PDO("mysql:host=localhost;dbname=$dbname", $username, $password);
-                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              // Connect to the database using PDO
+              $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+              $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+              ];
+              try {
+                $pdo = new PDO($dsn, $username, $password, $options);
+              } catch (PDOException $e) {
+                echo "error connecting";
+                throw new PDOException($e->getMessage(), (int) $e->getCode());
+              }
 
-                    // Execute SQL query
-                    $sql = $_POST["query"];
-                    $sql = str_replace(";", "", $sql);
+              // Get the email and password from the form
+              $email = $_POST["email"];
+              $password = $_POST["password"];
 
-                    // Check if query is a SELECT statement
-                    if (preg_match("/^\s*SELECT/i", $sql)) {
-                        $num_results = $_POST["num_results"];
-                        $sql .= " LIMIT " . $num_results;
-                    }
-
-                    $stmt = $conn->prepare($sql);
-                    $stmt->execute();
-
-                    // Display results on HTML page
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    if (count($result) > 0) {
-                        echo "<table>";
-                        echo "<tr>";
-                        foreach (array_keys($result[0]) as $field) {
-                            echo "<th>" . $field . "</th>";
-                        }
-                        echo "</tr>";
-                        foreach ($result as $row) {
-                            echo "<tr>";
-                            foreach ($row as $cell) {
-                                echo "<td>" . $cell . "</td>";
-                            }
-                            echo "</tr>";
-                        }
-                        echo "</table>";
-                    } else {
-                        echo "No results found.";
-                    }
-
-                    // Close MySQL connection
-                    $conn = null;
-                } catch(PDOException $e) {
-                    echo "Error executing query: " . $e->getMessage();
+              // Prepare and execute the query to check if the user exists
+              $sql = "SELECT password FROM creds WHERE email = :email";
+              $stmt = $pdo->prepare($sql);
+              $stmt->execute(["email" => $email]);
+              if ($stmt->rowCount() > 0) {
+                $row = $stmt->fetch();
+                $password_hash = $row["password"];
+                if (password_verify($password, $password_hash)) {
+                  echo "Password is valid!";
+                  echo '<script>alert("Your password is valid ! Congratulation")</script>';
+                } else {
+                  echo "Invalid password.";
                 }
+              } else {
+                echo "Error, bad credentials";
               }
               ?>
           </form>
