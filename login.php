@@ -114,8 +114,8 @@ if (password_verify($password, $password_hash)) {
           </form>
         </div>
         <div class="switcher">
-            <a href="demo.php" ><button class="page-button">&lt;</button></a>
-            <a> 4/5 </a>
+            <a href="code.php" ><button class="page-button">&lt;</button></a>
+            <a> 3/4 </a>
             <a href="sqli.php"><button class="page-button">&gt;</button></a>
         </div>
       </div>

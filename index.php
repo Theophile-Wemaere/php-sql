@@ -44,7 +44,7 @@
         <img src="https://live.staticflickr.com/8320/8008190808_eb052f2203.jpg">
         <div class="switcher">
           <a><button class="page-button">&lt;</button></a>
-          <a> 1/5 </a>
+          <a> 1/4 </a>
           <a href="code.php"><button class="page-button">&gt;</button></a>
         </div>
       </div>

@@ -69,7 +69,7 @@ $stmt->execute(["email" => $email]);
         ?>
         <div class="switcher">
           <a href="login.php" ><button class="page-button">&lt;</button></a>
-          <a> 5/5 </a>
+          <a> 4/4 </a>
           <a><button class="page-button">&gt;</button></a>
         </div>
       </div>

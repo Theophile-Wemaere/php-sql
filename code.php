@@ -85,8 +85,8 @@ $conn = null;
       ?>
         <div class="switcher">
           <a href="index.php"><button class="page-button">&lt;</button></a>
-          <a> 2/5 </a>
-          <a href="demo.php"><button class="page-button">&gt;</button></a>
+          <a> 2/4 </a>
+          <a href="login.php"><button class="page-button">&gt;</button></a>
         </div>
       </div>
     </div>
