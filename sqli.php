@@ -55,7 +55,7 @@ $query = \'SELECT * FROM users WHERE username = $username AND password = $passwo
         htmlspecialchars($phpCode) .
         "</code></pre>";
       ?>
-        <img src="https://academy.hackthebox.com/storage/modules/33/notadmin_diagram_1.png" width=50% height=auto>
+        <img src="https://academy.hackthebox.com/storage/modules/33/or_inject_diagram.png" width=50% height=auto>
         <?php
         $phpCode = '$email = $_POST["username"];
 $password = $_POST["password"];
