@@ -38,27 +38,23 @@
       <div class="main-box">
         <div class="login">
         <?php
-        $phpCode = '//Get the email and password from the form
+        $phpCode = '// Get the email and password from the form
 $email = $_POST["email"];
-$password = md5($_POST["password"]);
+$password = $_POST["password"];
 
 // Prepare and execute the query to check if the user exists
 $sql = "SELECT password FROM creds WHERE email = :email";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(["email" => $email]);
-$result = $stmt->fetchColumn();
-
 if ($stmt->rowCount() > 0) {
-  $row = $stmt->fetch();
-  $password_hash = $row[\'password\'];
-  if (password_verify($password, $password_hash)) {
-    echo "Password is valid";
-  } else {
-      echo "Invalid password";
-  }
+$row = $stmt->fetch();
+$password_hash = $row["password"];
+if (password_verify($password, $password_hash)) {
+  echo "Password is valid!";
+  echo \'<script>alert("Your password is valid ! Congratulation")</script>\';
 } else {
-  echo "Error, bad credentials";
-};';
+  echo "Invalid password.";
+}';
         echo '<pre><code class="language-php">' .
           htmlspecialchars($phpCode) .
           "</code></pre>";
